@@ -6,7 +6,7 @@
 #include <iostream>
 
 int main() {
-    int a = 5;
-    std::cout << "Size of int: " << sizeof(int) << std::endl;
-    std::cout << "Size of int (but different)" << sizeof a << std::endl;
+    mandelbrot mb;
+    mb.calculate_mandelbrot();
+    mb.print_to_console();
 }

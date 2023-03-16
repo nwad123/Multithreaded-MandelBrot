@@ -6,8 +6,8 @@
 #define MANDELBROT_H
 
 // output size
-#define MAND_HEIGHT 2048    // height of the image
-#define MAND_WIDTH 4096     // width of the image
+#define MAND_HEIGHT 25    // height of the image
+#define MAND_WIDTH 60     // width of the image
 
 #include <immintrin.h>
 #include <iostream>
