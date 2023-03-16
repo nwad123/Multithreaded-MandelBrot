@@ -9,7 +9,13 @@
 #include <ctime> // time of program
 #include <random>
 
-int main () {
+int main() {
+    int a = 5;
+    std::cout << "Size of int: " << sizeof(int) << std::endl;
+    std::cout << "Size of int (but different)" << sizeof a << std::endl;
+}
+
+/*int main() {
     //random number generator initialization
     typedef std::chrono::high_resolution_clock rand_clock;
     //set the beginning of the clock to now
@@ -73,4 +79,4 @@ int main () {
         << computation_time.count() << "s\n";
     std::cin.ignore();
     return 0;
-}
+}*/

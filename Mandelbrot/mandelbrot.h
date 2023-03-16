@@ -1,87 +1,76 @@
 //Engineer: Nick Waddoups
-//Project: Mandelbrot
-//File: Mandelbrot header
+//Project:  Mandelbrot
+//File:     Mandelbrot header
 
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
-//library
-#include "bmp.h"
-#include <chrono>
-#include <random>
-#include <functional>
+// output size
+#define MAND_HEIGHT 2048    // height of the image
+#define MAND_WIDTH 4096     // width of the image
 
-//class definition \
-mandelbrot is derived from bitmap_file
-class mandelbrot : public bitmap_file {
+#include <immintrin.h>
+#include <iostream>
+
+// Mandelbrot Class
+//  - stores mandelbrot iterations in an array
+//  - X: [-2.2, 0.8]
+//  - Y: [-1.2, 1.2]
+class mandelbrot {
 private:
-    //max iteration var, default is 1000. same for all mandelbrots
+    // Mandelbrot Matrix [height][width]
+    //  - Stores the iteration count for the mandelbrot image
+    unsigned int *output;
+
+    // Maximum mandelbrot iteration
+    //  - Higher values lead to more accurate results, lower values
+    //    calculate faster
     unsigned int max_iteration;
-    //iteration counter
-    unsigned int iteration;
-    //doubles for pixel values, used in value_of_pix functions
-    double x0, y0, x1, y1, w;
-    //number for changing the scale. Bigger = smaller picture
-    double a;
-    //number for changing the x position
-    double b;
-    //number for changing the y position
-    double c;
-    //color palette, the colored palette gets changed in \
-    value_of_pix functions which the black palette is a \
-    simple black one
-    colorpalette coloredpalette, blackpalette, whitepalette;
+
+    // Right size of the image x-value
+    double x_positive;
+    // Left size of the image x-value
+    double x_negative;
+
+    // Right size of the image y-value
+    double y_positive;
+    // Left size of the image y-value
+    double y_negative;
+
 public:
-    //constructor that opens
-    mandelbrot(std::string filename) : bitmap_file(filename),
-    max_iteration(1000), iteration(0), a(1), b(0), c(0) {
-        whitepalette.setrgb(255, 255, 255);
+    // Basic constructor - no inputs
+    //  - Max iterations = 1000
+    //  - X range = [-2.2, 0.8]
+    //  - Y range is calculated based of image size and 
+    mandelbrot() : max_iteration(1000) {
+        // allocate 32-byte aligned space for output for AVX compatability
+        output = (unsigned int *)( _mm_malloc((sizeof(int) * MAND_WIDTH * MAND_HEIGHT), 32) );
+        
+        // original x bounds are from [-2.2, 0.8]; We scale the y bounds according
+        // to the set height and width
+        double y_range = ((double)(MAND_HEIGHT) / (double)(MAND_WIDTH)) * (0.8 - (-2.2));
+
+        // setting the x scaling
+        x_positive = 0.8;
+        x_negative = -2.2;
+
+        // setting the y scaling
+        y_positive = (y_range / 2);
+        y_negative = (y_range / 2) * (-1);
     }
 
-    //pointer to the color palette for each pixel (basic)
-    colorpalette * value_of_pix(double x, double y);
-
-    /*pointer to the color palette for each pixel with 
-      options for preset palettes
-        0: grayscale
-        1: reds/oranges
-        2: greens/blues
-        3: purples/blacks
-        4: rainbow (not working rn)*/
-    colorpalette * value_of_pix_color_presets(double x, double y, 
-        uchar_16 preset_num);
-
-    /*pointer to the color paletter for each pixel, with 
-      different tranformations
-        0: image is reversed horizontally
-        1: image is rotated 90 degrees to the right
-        2: image is rotated 90 degrees to the left
-        3: image is mirrored over center access*/
-    colorpalette * value_of_pix_transformations(double x, double y, 
-        uchar_16 transform);
-
-    //prints crazy rainbow shiz
-    colorpalette * value_of_pix_rainbow(double x, double y, 
-        colorpalette& p_in);
-
-    //prints random stuff
-    colorpalette * random_palette(double x, double y, uchar_16 r, 
-        uchar_16 g, uchar_16 b);
-    colorpalette * value_of_pix_r(double x, double y);
-
-    //fills out a black and white mandelbrot image (basic)
-    void fill_out();
-    void fill_out_rainbow();
-    void fill_out_random(int redmul, int greenmul, int bluemul);
-
     //setter functions
-    void set_a(double in) { a = in; }
-    void set_b(double in) { b = in; }
-    void set_c(double in) { c = in; }
-    void set_maxiteration(unsigned int in) { max_iteration = in; }
+    void set_max_iteration(unsigned int in) { max_iteration = in; }
 
-    //mandelbrot function (makes it easier to read/program)
-    unsigned int mandelbrot_math(double x, double y);
+    // getter functions
+    double get_x_range() { return x_positive - x_negative; }
+    double get_y_range() { return y_positive - y_negative; }
+
+    // Calculates the mandelbrot set
+    void calculate_mandelbrot();
+
+    // Prints it to the terminal (useful for debug)
+    void print_to_console();
 };
 
 #endif //MANDELBROT_H
