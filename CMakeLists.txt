@@ -5,6 +5,37 @@ project(Multithreaded_Mandelbrot)
 # generate compile_commands.json for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# set warning flags
+message(STATUS "Adding warning flags")
+if (MSVC)
+  add_compile_options(/W4)
+else ()
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# set optimization flags
+if (NOT DEFINED RELEASE)
+  message(STATUS "Debug/Release not specified. Setting to debug by default...")
+  set(RELEASE false)
+endif()
+
+# setting release and debug flags
+if (RELEASE)
+  message(STATUS "Adding optimization options")
+  if (MSVC)
+    add_compile_options(/O2)
+  else ()
+    add_compile_options(-O3 -march=native -m64)
+  endif()
+else()
+  message(STATUS "Adding debug options")
+  if (MSVC)
+    add_compile_options(/Zi)
+  else ()
+    add_compile_options(-g3)
+  endif()
+endif()
+
 # call the executable the same as the project name
 add_executable(${PROJECT_NAME} main.cpp)
 

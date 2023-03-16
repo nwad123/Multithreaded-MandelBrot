@@ -6,8 +6,8 @@
 #define MANDELBROT_H
 
 // output size
-#define MAND_HEIGHT 25    // height of the image
-#define MAND_WIDTH 60     // width of the image
+#define MAND_HEIGHT 45    // height of the image
+#define MAND_WIDTH 90    // width of the image
 
 #include <immintrin.h>
 #include <iostream>
@@ -27,6 +27,10 @@ private:
     //    calculate faster
     unsigned int max_iteration;
 
+    // image height and width
+    size_t height;
+    size_t width;
+
     // Right size of the image x-value
     double x_positive;
     // Left size of the image x-value
@@ -43,12 +47,16 @@ public:
     //  - X range = [-2.2, 0.8]
     //  - Y range is calculated based of image size and 
     mandelbrot() : max_iteration(1000) {
+        // set height and width to macro values
+        height = MAND_HEIGHT;
+        width = MAND_WIDTH;
+
         // allocate 32-byte aligned space for output for AVX compatability
-        output = (unsigned int *)( _mm_malloc((sizeof(int) * MAND_WIDTH * MAND_HEIGHT), 32) );
+        output = (unsigned int *)( _mm_malloc((sizeof(int) * height * width), 32) );
         
-        // original x bounds are from [-2.2, 0.8]; We scale the y bounds according
+        // default x bounds are from [-2.2, 0.8]; We scale the y bounds according
         // to the set height and width
-        double y_range = ((double)(MAND_HEIGHT) / (double)(MAND_WIDTH)) * (0.8 - (-2.2));
+        double y_range = ((double)(height) / (double)(width)) * (0.8 - (-2.2));
 
         // setting the x scaling
         x_positive = 0.8;

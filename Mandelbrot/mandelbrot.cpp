@@ -7,23 +7,23 @@
 void mandelbrot::calculate_mandelbrot() {
     // mandelbrot variables
     double
-        x(x_positive),
+        x(x_negative),
         y(y_positive),
         x_loop(0),
         x_temp(0),
         y_loop(0);
 
     // scaling variables
-    double x_step = get_x_range() / (double)(MAND_WIDTH);
-    double y_step = get_y_range() / (double)(MAND_HEIGHT);
+    double x_step = get_x_range() / (double)(width);
+    double y_step = get_y_range() / (double)(height);
 
     // Loop variables
     size_t row(0), col(0), iteration(0);
 
     // Row loops
-    for (row = 0; row < MAND_HEIGHT; row++) {
+    for (row = 0; row < height; row++) {
         // Column loops
-        for (col = 0; col < MAND_WIDTH; col++) {
+        for (col = 0; col < width; col++) {
             // Reset internal calculation variables
             x_loop = 0;
             x_temp = 0;
@@ -43,14 +43,15 @@ void mandelbrot::calculate_mandelbrot() {
             } // iterations
 
             // Set matrix point to be the iteration count
-            output[(row * MAND_WIDTH) + col] = iteration;
+            output[(row * width) + col] = iteration;
 
             // Update x position
             x = x + x_step;
         } // columns
 
-        // Update y position
-        y = y + y_step;
+        // Update x and y positions
+        x = x_negative;
+        y = y - y_step;
 
     } // rows
 } // fn calculate_mandelbrot()
@@ -63,20 +64,20 @@ void mandelbrot::print_to_console() {
     char print;
 
     // Iteration at point
-    int iteration;
+    unsigned int iteration;
 
     // Row loops
-    for (row = 0; row < MAND_HEIGHT; row++) {
+    for (row = 0; row < height; row++) {
         // Column loops
-        for (col = 0; col < MAND_WIDTH; col++) {
+        for (col = 0; col < width; col++) {
             // get the iteration
-            iteration = output[(row * MAND_WIDTH) + col];
+            iteration = output[(row * width) + col];
 
             // Calculate the value of the character
             print =
                 (iteration == max_iteration) ? '@' :
-                (iteration > 750) ? '+' :
-                (iteration > 500) ? '-' : 
+                (iteration > 10) ? '+' :
+                (iteration > 1) ? '-' : 
                 ' ';
 
             // Print the character to the console
