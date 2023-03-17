@@ -5,12 +5,14 @@
 #ifndef MANDELBROT_H
 #define MANDELBROT_H
 
-// output size
-#define MAND_HEIGHT 45    // height of the image
-#define MAND_WIDTH 90    // width of the image
+// default output size
+#include <vector>
+#define MAND_HEIGHT 35 // height of the image
+#define MAND_WIDTH 50  // width of the image
 
 #include <immintrin.h>
 #include <iostream>
+#include <thread>
 
 // Mandelbrot Class
 //  - stores mandelbrot iterations in an array
@@ -41,6 +43,13 @@ private:
     // Left size of the image y-value
     double y_negative;
 
+    // Threads
+    unsigned int number_of_threads;
+    std::vector<std::thread> threads;
+
+    // Calculates the mandelbrot set for a given range
+    void calculate_mandelbrot_range(size_t row_begin, size_t row_end);
+
 public:
     // Basic constructor - no inputs
     //  - Max iterations = 1000
@@ -65,6 +74,16 @@ public:
         // setting the y scaling
         y_positive = (y_range / 2);
         y_negative = (y_range / 2) * (-1);
+
+        // set up the number of threads to be the maximum number of rows
+        number_of_threads = (number_of_threads > height) ? height : number_of_threads;
+        threads.resize(number_of_threads);
+    }
+
+    // Basic destructor
+    //  - Frees output memory
+    ~mandelbrot() {
+        delete [] output;
     }
 
     //setter functions
@@ -74,8 +93,11 @@ public:
     double get_x_range() { return x_positive - x_negative; }
     double get_y_range() { return y_positive - y_negative; }
 
-    // Calculates the mandelbrot set
-    void calculate_mandelbrot();
+    // Calculates the mandelbrot set using a single thread
+    void calculate_mandelbrot_st();
+
+    // Calculate the mandelbrot set using multiple threads
+    void calculate_mandelbrot_mt();
 
     // Prints it to the terminal (useful for debug)
     void print_to_console();
