@@ -4,9 +4,10 @@
 
 #include "mandelbrot.h"
 
-void mandelbrot::calculate_mandelbrot_range(size_t row_begin, size_t row_end) {
+void mandelbrot::calculate_mandelbrot_range(const size_t row_begin,
+                                            const size_t row_end) {
   // mandelbrot variables
-  double x(x_negative), y(y_positive), x_loop(0), x_temp(0), y_loop(0);
+  double x, y, x_loop(0), x_temp(0), y_loop(0);
 
   // scaling variables
   double x_step = get_x_range() / (double)(width);
@@ -14,6 +15,10 @@ void mandelbrot::calculate_mandelbrot_range(size_t row_begin, size_t row_end) {
 
   // Loop variables
   size_t row(0), col(0), iteration(0);
+
+  // Set x to it's leftmost position
+  x = x_negative;
+  y = y_positive - ((double)row_begin * y_step);
 
   // Row loops
   for (row = row_begin; row <= row_end; row++) {
@@ -56,18 +61,46 @@ void mandelbrot::calculate_mandelbrot_st() {
 
 void mandelbrot::calculate_mandelbrot_mt() {
   // divide up the rows
-  unsigned int number_of_rows_per_thread = height / number_of_threads;
+  unsigned int number_of_rows_per_thread = (height / number_of_threads) + 1;
 
-  // assign work to the threads
-  for (size_t starting_row = 0; starting_row < height;
-       starting_row += number_of_rows_per_thread + 1) {
-    size_t ending_row = (starting_row + number_of_rows_per_thread) >= height
-                            ? (starting_row + number_of_rows_per_thread)
-                            : height;
-    threads.push_back(std::thread(&mandelbrot::calculate_mandelbrot_range,
+  // initially set the starting row to 0 (as that is the first row)
+  size_t starting_row = 0;
+  // set the ending row for this first set to the number of rows it should use
+  size_t ending_row = starting_row + number_of_rows_per_thread;
+
+  // assign work to each thread
+  while (ending_row < height) {
+    // print thread information to std error
+    std::cout << "Assigning thread to rows " << starting_row << " and "
+              << ending_row << std::endl;
+
+    // assign work to the threads
+    threads.push_back(std::thread(&mandelbrot::calculate_mandelbrot_range, this,
                                   starting_row, ending_row));
+
+    // updating the row positions for the next thread
+    starting_row = ending_row + 1;
+    ending_row = starting_row + number_of_rows_per_thread;
+  }
+
+  // assign the final rows to the last thread
+  ending_row = height - 1;
+
+  std::cout << "Assigning final thread to rows " << starting_row << " and "
+            << ending_row << std::endl;
+
+  threads.push_back(std::thread(&mandelbrot::calculate_mandelbrot_range, this,
+                                starting_row, ending_row));
+
+  // allow threads to finish
+  for (auto &t : threads) {
+    if (t.joinable()) {
+      std::cout << "Joining thread " << t.get_id() << std::endl;
+      t.join();
+    }
   }
 }
+
 void mandelbrot::print_to_console() {
   // Loop variables
   size_t row, col;

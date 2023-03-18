@@ -5,3 +5,4 @@ config.sh
 build.sh
 run.sh
 .cache/clangd/index
+.vscode/
