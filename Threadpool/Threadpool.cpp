@@ -1,6 +1,4 @@
 #include "Threadpool.h"
-#include <mutex>
-#include <thread>
 
 // Starts the threadpool
 void Threadpool::Start() {
