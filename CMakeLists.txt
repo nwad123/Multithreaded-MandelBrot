@@ -39,6 +39,15 @@ endif()
 # call the executable the same as the project name
 add_executable(${PROJECT_NAME} main.cpp)
 
+# Add Threadpool library
+add_subdirectory(Threadpool)
+
+target_include_directories(${PROJECT_NAME} PUBLIC Threadpool)
+
+target_link_directories(${PROJECT_NAME} PRIVATE Threadpool)
+
+target_link_libraries(${PROJECT_NAME} Threadpool)
+
 # Add Mandelbrot library
 add_subdirectory(Mandelbrot)
 
