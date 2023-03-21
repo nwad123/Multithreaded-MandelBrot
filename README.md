@@ -51,11 +51,12 @@ up improving our speed by a factor of two.
 
 ## Threading
 
-I opened 12 `std::thread`s and assigned each thread a portion of the Mandelbrot work. Again we can see that this dramatically improves
-runtime, almost by a factor of two.
+The program spawns 12 threads (using `std::thread`) and assigns them a portion of the Mandelbrot work. Again we can see that this dramatically improves
+runtime, by more than a factor of two.
 
-The threading model used is not the best however. As different parts of the mandelbrot fractal take a different number of iterations
+The threading model used is not the best however. As different parts of the Mandelbrot fractal take a different number of iterations
 to calculate, some threads are more heavily used than others.
-![](./test/st_v_mt_overall.png)
+
+![Basic Optimization Speedup](./test/st_v_mt_overall.png)
 
 ![](./test/st_v_mt_1080p.png)
