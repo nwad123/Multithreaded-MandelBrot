@@ -44,7 +44,18 @@ array calculating each points Mandelbrot iteration.
 My original program used no optimization flags, no vectorization, and no multi-threading. Implementing each of these
 provides an opportunity to speed up Mandelbrot generation.
 
+## Optimization Flags
+
+Using G++ And Clang++ I added the `-O3`, `-march=native`, and `-m64` flags to improve performance. As we will see from later plots this ends
+up improving our speed by a factor of two.
+
+## Threading
+
+I opened 12 `std::thread`s and assigned each thread a portion of the Mandelbrot work. Again we can see that this dramatically improves
+runtime, almost by a factor of two.
+
+The threading model used is not the best however. As different parts of the mandelbrot fractal take a different number of iterations
+to calculate, some threads are more heavily used than others.
 ![](./test/st_v_mt_overall.png)
 
-
-![](./test/st_v_mt_overall.png)
+![](./test/st_v_mt_1080p.png)
