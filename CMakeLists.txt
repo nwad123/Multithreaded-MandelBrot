@@ -1,3 +1,9 @@
+# set to clang (nicer warnings)
+if(EXISTS "/usr/bin/clang" AND EXISTS "/usr/bin/clang++")
+  SET(CMAKE_C_COMPILER "/usr/bin/clang")
+  SET(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+endif()
+
 cmake_minimum_required(VERSION 3.22.1)
 
 project(Multithreaded_Mandelbrot)
@@ -10,7 +16,7 @@ message(STATUS "Adding warning flags")
 if (MSVC)
   add_compile_options(/W4)
 else ()
-  add_compile_options(-Wall -Wextra -Wpedantic)
+  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif()
 
 # set optimization flags
@@ -32,7 +38,7 @@ else()
   if (MSVC)
     add_compile_options(/Zi)
   else ()
-    add_compile_options(-g3)
+    add_compile_options(-g3 -O0)
   endif()
 endif()
 

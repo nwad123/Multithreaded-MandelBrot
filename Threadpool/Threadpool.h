@@ -2,6 +2,7 @@
 
 #include <condition_variable>
 #include <functional>
+#include <iostream>
 #include <mutex>
 #include <queue>
 #include <thread>
@@ -18,12 +19,13 @@ private:
   std::queue<std::function<void()>> jobs;
 
 public:
-  Threadpool();
+  Threadpool() {
+    should_terminate = false;
+    start();
+  }
 
-  ~Threadpool();
-
-  void Start();
-  void QueueJob(const std::function<void()> &job);
-  void Stop();
+  void start();
+  void add_job(const std::function<void()> &job);
+  void stop();
   bool busy();
 };

@@ -1,7 +1,8 @@
 #include "Threadpool.h"
+#include <thread>
 
 // Starts the threadpool
-void Threadpool::Start() {
+void Threadpool::start() {
   // get the number of threads available on the system
   const int num_threads = std::thread::hardware_concurrency();
 
@@ -12,6 +13,10 @@ void Threadpool::Start() {
   for (int i = 0; i < num_threads; i++) {
     threads.push_back(std::thread(&Threadpool::thread_loop, this));
   }
+
+  // report on threads spawned
+  std::cout << "Successfully started thread pool with " << num_threads
+            << " threads." << std::endl;
 }
 
 // The worker function
@@ -36,6 +41,7 @@ void Threadpool::thread_loop() {
 
       // get the next job
       job = jobs.front();
+      jobs.pop();
     }
 
     // run the job
@@ -44,7 +50,7 @@ void Threadpool::thread_loop() {
 }
 
 // Add a job to the pool
-void Threadpool::QueueJob(const std::function<void()> &job) {
+void Threadpool::add_job(const std::function<void()> &job) {
   {
     std::unique_lock<std::mutex> lock(queue_mutex);
     jobs.push(job);
@@ -57,13 +63,13 @@ bool Threadpool::busy() {
   bool pool_is_busy;
   {
     std::unique_lock<std::mutex> lock(queue_mutex);
-    pool_is_busy = jobs.empty();
+    pool_is_busy = !jobs.empty();
   }
   return pool_is_busy;
 }
 
 //
-void Threadpool::Stop() {
+void Threadpool::stop() {
   {
     std::unique_lock<std::mutex> lock(queue_mutex);
     should_terminate = true;
@@ -71,7 +77,9 @@ void Threadpool::Stop() {
   mutex_condition.notify_all();
 
   for (std::thread &thread : threads) {
-    thread.join();
+    if (thread.joinable()) {
+      thread.join();
+    }
   }
 
   threads.clear();
