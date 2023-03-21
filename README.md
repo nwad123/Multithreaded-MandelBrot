@@ -54,9 +54,15 @@ up improving our speed by a factor of two.
 The program spawns 12 threads (using `std::thread`) and assigns them a portion of the Mandelbrot work. Again we can see that this dramatically improves
 runtime, by more than a factor of two.
 
-The threading model used is not the best however. As different parts of the Mandelbrot fractal take a different number of iterations
-to calculate, some threads are more heavily used than others.
-
 ![Basic Optimization Speedup](./test/st_v_mt_overall.png)
 
-![](./test/st_v_mt_1080p.png)
+![Speedup at 1080p](./test/st_v_mt_1080p.png)
+
+We can see that these two optimization provide a significant speedup over my naive implementation.
+The threading model is not the best however. It assigns an even number of work to each thread, regardless of the length that
+the work will take.
+
+If we run the program through Intel Vtune, we can see that the threads are being used unevenly.
+
+![Vtune Simple MultiThread](./test/basic_mt_vtune.png)
+
