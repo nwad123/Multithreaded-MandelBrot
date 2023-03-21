@@ -12,14 +12,14 @@ using namespace std::chrono_literals;
 
 int main() {
 
-  std::cout << "x, y, elapsed-time-ms" << std::endl;
+  std::cout << "height, width, elapsed-time-ms" << std::endl;
 
-  for (size_t a = 256; a < 10000; a *= 2) {
+  for (size_t a = 8; a < 10000; a *= 2) {
     mandelbrot mb(a, a);
 
     const auto start = std::chrono::high_resolution_clock::now();
 
-    mb.calculate_mandelbrot_st();
+    mb.calculate_mandelbrot_mt();
 
     const auto end = std::chrono::high_resolution_clock::now();
 
@@ -27,6 +27,18 @@ int main() {
 
     std::cout << a << ", " << a << ", " << elapsed.count() << std::endl;
   }
+
+  mandelbrot mb(1080, 1920);
+
+  const auto start = std::chrono::high_resolution_clock::now();
+
+  mb.calculate_mandelbrot_mt();
+
+  const auto end = std::chrono::high_resolution_clock::now();
+
+  const std::chrono::duration<double, std::milli> elapsed = end - start;
+
+  std::cout << "1080, 1920, " << elapsed.count() << std::endl;
   // mandelbrot mb_m;
   // mb_m.calculate_mandelbrot_mt();
   // mb_m.print_to_console();

@@ -71,8 +71,8 @@ void mandelbrot::calculate_mandelbrot_mt() {
   // assign work to each thread
   while (ending_row < height) {
     // print thread information to std error
-    std::cout << "Assigning thread to rows " << starting_row << " and "
-              << ending_row << std::endl;
+    // std::cout << "Assigning thread to rows " << starting_row << " and "
+    //           << ending_row << std::endl;
 
     // assign work to the threads
     threads.push_back(std::thread(&mandelbrot::calculate_mandelbrot_range, this,
@@ -86,8 +86,8 @@ void mandelbrot::calculate_mandelbrot_mt() {
   // assign the final rows to the last thread
   ending_row = height - 1;
 
-  std::cout << "Assigning final thread to rows " << starting_row << " and "
-            << ending_row << std::endl;
+  // std::cout << "Assigning final thread to rows " << starting_row << " and "
+  //           << ending_row << std::endl;
 
   threads.push_back(std::thread(&mandelbrot::calculate_mandelbrot_range, this,
                                 starting_row, ending_row));
@@ -95,7 +95,7 @@ void mandelbrot::calculate_mandelbrot_mt() {
   // allow threads to finish
   for (auto &t : threads) {
     if (t.joinable()) {
-      std::cout << "Joining thread " << t.get_id() << std::endl;
+      // std::cout << "Joining thread " << t.get_id() << std::endl;
       t.join();
     }
   }
