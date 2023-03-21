@@ -7,3 +7,5 @@ run.sh
 .cache/clangd/index
 .vscode/
 test.sh
+test
+single_threaded_test.txt

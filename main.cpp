@@ -14,7 +14,7 @@ int main() {
 
   std::cout << "x, y, elapsed-time-ms" << std::endl;
 
-  for (size_t a = 256; a < 100000; a *= 2) {
+  for (size_t a = 256; a < 10000; a *= 2) {
     mandelbrot mb(a, a);
 
     const auto start = std::chrono::high_resolution_clock::now();
