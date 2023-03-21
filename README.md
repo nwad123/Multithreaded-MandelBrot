@@ -30,3 +30,21 @@ Ideas to fix this:
 
 1. Build a thread pool with a checkout system where each thread executes a row, then returns, then checks out another row, executes, returns, etc. This way each thread may be used more effectively.
 2. Assigne each thread to the only doubles of their original position. E.g. thread 0 executes rows 0, 12, 24, 36, 48, etc. This way the rows would be more evenly spread between threads, so they should execute at normal times. This would only provide a speed up for some zoom levels of the mandelbrot.
+
+# Report
+
+For my C++ programming class we wrote a simple Mandelbrot generator. As a TA I wanted to rewrite the program
+and how much speed I could get from the program. My goal is to generate 1080x1920p images at 30 fps.
+
+# Initial Program
+
+My original program implemented a array with the data for the Mandelbrot image, and iterated over the
+array calculating each points Mandelbrot iteration.
+
+My original program used no optimization flags, no vectorization, and no multi-threading. Implementing each of these
+provides an opportunity to speed up Mandelbrot generation.
+
+![](./test/st_v_mt_overall.png)
+
+
+![](./test/st_v_mt_overall.png)
