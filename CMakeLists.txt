@@ -16,7 +16,7 @@ message(STATUS "Adding warning flags")
 if (MSVC)
   add_compile_options(/W4)
 else ()
-  add_compile_options(-Wall -Wextra -Wpedantic -Werror)
+  add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
 # set optimization flags
