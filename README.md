@@ -62,7 +62,9 @@ We can see that these two optimization provide a significant speedup over my nai
 The threading model is not the best however. It assigns an even number of work to each thread, regardless of the length that
 the work will take.
 
-If we run the program through Intel Vtune, we can see that the threads are being used unevenly.
+If we run the program through Intel Vtune, we can see that the threads are being used unevenly. I believe this is because the mandelbrot set does
+not require an even number of calculations throughout the image. Some areas will take 1 iteration, while others will take 1000. Assigning the areas
+to be calculated more evenly should resolve this issue.
 
 ![Vtune Simple MultiThread](./test/basic_mt_vtune.png)
 
