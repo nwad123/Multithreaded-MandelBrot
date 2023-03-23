@@ -22,7 +22,7 @@ void Threadpool::start() {
 // The worker function
 void Threadpool::thread_loop() {
   // job variable
-  std::function<void(const size_t, const size_t)> job;
+  std::function<void()> job;
 
   // infinite loop that checks if there are tasks available
   while (true) {
@@ -50,10 +50,10 @@ void Threadpool::thread_loop() {
 }
 
 // Add a job to the pool
-void Threadpool::add_job(
-    const std::function<void(const size_t, const size_t)> &job) {
+void Threadpool::add_job(const std::function<void()> &job) {
   {
     std::unique_lock<std::mutex> lock(queue_mutex);
+
     jobs.push(job);
   }
   mutex_condition.notify_one();

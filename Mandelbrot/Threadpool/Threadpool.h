@@ -33,7 +33,7 @@ private:
   std::mutex queue_mutex;
   std::condition_variable mutex_condition;
   std::vector<std::thread> threads;
-  std::queue<std::function<void(const size_t, const size_t)>> jobs;
+  std::queue<std::function<void()>> jobs;
 
 public:
   Threadpool() {
@@ -42,8 +42,7 @@ public:
   }
 
   void start();
-  void add_job(const std::function<void(const size_t, const size_t)> &job,
-               size_t start, size_t end);
+  void add_job(const std::function<void()> &job);
   void stop();
   bool busy();
 };

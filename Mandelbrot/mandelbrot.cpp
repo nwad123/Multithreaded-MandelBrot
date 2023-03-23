@@ -3,6 +3,9 @@
 // File:     Mandelbrot cpp
 
 #include "mandelbrot.h"
+#include <cstdio>
+#include <functional>
+#include <thread>
 
 void mandelbrot::calculate_mandelbrot_range(const size_t row_begin,
                                             const size_t row_end) {
@@ -60,6 +63,14 @@ void mandelbrot::calculate_mandelbrot_st() {
 } // fn calculate_mandelbrot()
 
 void mandelbrot::calculate_mandelbrot_mt() {
+  // Threads
+  unsigned int number_of_threads;
+  std::vector<std::thread> threads;
+
+  // set up the number of threads to be the maximum number of rows
+  number_of_threads = std::thread::hardware_concurrency();
+  threads.resize(number_of_threads);
+
   // divide up the rows
   unsigned int number_of_rows_per_thread = (height / number_of_threads) + 1;
 
@@ -99,6 +110,28 @@ void mandelbrot::calculate_mandelbrot_mt() {
       t.join();
     }
   }
+}
+
+void mandelbrot::calculate_mandelbrot_tp() {
+  // thread pool
+  Threadpool tp;
+
+  // the number of rows taken at a time by a thread
+  constexpr size_t work_size = 10;
+
+  // add jobs to the thread pool queue
+  size_t rows;
+  for (rows = 0; rows < this->height; rows += work_size + 1) {
+    tp.add_job(std::bind(&mandelbrot::calculate_mandelbrot_range, this, rows,
+                         rows + work_size));
+  }
+
+  // add the final job to the thread queue
+  tp.add_job(std::bind(&mandelbrot::calculate_mandelbrot_range, this,
+                       rows - (work_size + 1), this->height - 1));
+
+  // wait for work to be completed
+  tp.stop();
 }
 
 void mandelbrot::print_to_console() {
