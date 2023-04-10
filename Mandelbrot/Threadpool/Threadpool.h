@@ -26,15 +26,6 @@
 // };
 
 class Threadpool {
-private:
-  void thread_loop();
-
-  bool should_terminate;
-  std::mutex queue_mutex;
-  std::condition_variable mutex_condition;
-  std::vector<std::thread> threads;
-  std::queue<std::function<void()>> jobs;
-
 public:
   Threadpool() {
     should_terminate = false;
@@ -45,4 +36,13 @@ public:
   void add_job(const std::function<void()> &job);
   void stop();
   bool busy();
+
+private:
+  void thread_loop();
+
+  bool should_terminate;
+  std::mutex queue_mutex;
+  std::condition_variable mutex_condition;
+  std::vector<std::thread> threads;
+  std::queue<std::function<void()>> jobs;
 };
